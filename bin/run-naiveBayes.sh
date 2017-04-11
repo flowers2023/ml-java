@@ -11,10 +11,10 @@ function run(){
     #java -XX:-UseGCOverheadLimit -Xmx10G -Xms10G -Xmn1G -Xss512m \
     # -cp ${work_path}/kmeans-test-1.0-SNAPSHOT-jar-with-dependencies.jar com.github2013.ml.AppKMeans \
     java -cp ./ml-java-1.0-SNAPSHOT-jar-with-dependencies.jar com.github2013.ml.AppNaiveBayes \
-	    ${HAPPY} \
+        ${HAPPY} \
         ${HAPPY_TEST} \
         ${SAD} \
-		${SAD_TEST}
+        ${SAD_TEST}
 }
 
 run

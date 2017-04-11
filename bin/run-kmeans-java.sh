@@ -8,7 +8,7 @@ work_path=$(cd `dirname $0`; pwd)
 cd $work_path
 
 if [ -f "${work_path}/config.properties" ]; then
-		source $work_path/config.properties
+    source $work_path/config.properties
 fi
 
 echo '---------args---------'
@@ -24,11 +24,11 @@ function run(){
     #java -XX:-UseGCOverheadLimit -Xmx10G -Xms10G -Xmn1G -Xss512m \
     # -cp ${work_path}/kmeans-test-1.0-SNAPSHOT-jar-with-dependencies.jar com.github2013.ml.AppKMeans \
     java -cp ${work_path}/ml-java-1.0-SNAPSHOT-jar-with-dependencies.jar com.github2013.ml.AppKMeans \
-	    ${THREAD_SIZE} \
+        ${THREAD_SIZE} \
         ${MAX_ITER} \
         ${EPSILON} \
-		${K} \
-		${path}
+        ${K} \
+        ${path}
 }
 
 paths=""
