@@ -7,10 +7,10 @@ import java.util.*;
  * Author : DRUNK
  * email :len1988.zhang@gmail.com
  * 本示例采用 斯坦福 朴素贝叶斯分类算法进行分类。参考文章如下：
- System.out.println(l.getName());
+ * System.out.println(l.getName());
  */
 
-public class NaiveBayesBer implements NaiveBayes{
+public class NaiveBayesBer implements NaiveBayes {
     private Set<String> vocabulary;
     private long docCount;
     private List<BernoulliModel> models;
@@ -156,14 +156,18 @@ public class NaiveBayesBer implements NaiveBayes{
         List<LabelProbability> retList = new ArrayList<LabelProbability>();
         for (String[] words : sentenceArray) {
             LabelProbability expectLP = new LabelProbability("", -Double.MAX_VALUE);
+            double sumAllProp = 0d;
             for (BernoulliModel model : models) {
                 LabelProbability tmpPrep = model.predictProbability(words);
-                //System.out.println("----------------tmpPrep:" + tmpPrep.toString());
-                //System.out.println("----------------expertPrep:" + expectLP.toString());
+                sumAllProp += Math.exp(tmpPrep.getProbability());
                 if (tmpPrep.getProbability() > expectLP.getProbability()) {
                     expectLP = tmpPrep;
                 }
+//                System.out.println(tmpPrep.getLabel() + "\tprop:" + tmpPrep.getProbability());
             }
+            expectLP.setPercentProp((double) Math.exp(expectLP.getProbability()) / sumAllProp);
+
+//            System.out.println("percent:" + expectLP.getPercentProp());
             retList.add(expectLP);
         }
         return retList;
@@ -181,6 +185,32 @@ public class NaiveBayesBer implements NaiveBayes{
         for (LabeledPoint labeledPoint : testLabeledPoints) {
             String predictLabel = predict(labeledPoint.getVordsVecotr());
             if (predictLabel.equals(labeledPoint.getLabel())) {
+                getLabelValidate(retList, labeledPoint.getLabel()).increaseCorrectCount(1);
+            } else {
+                getLabelValidate(retList, labeledPoint.getLabel()).increaseWrongCount(1);
+            }
+        }
+        System.out.println("--------------crossTest end--------------");
+
+        return retList;
+    }
+
+    /**
+     * 交叉验证
+     *
+     * @param testLabeledPoints
+     * @return
+     */
+    public List<LabelValidate> crossTest(List<LabeledPoint> testLabeledPoints, double lowProp) {
+        System.out.println("--------------crossTest--------------");
+        List<LabelValidate> retList = new ArrayList<LabelValidate>();
+        for (LabeledPoint labeledPoint : testLabeledPoints) {
+            LabelProbability predictLabel = predictProbability(labeledPoint.getVordsVecotr());
+//            System.out.println(predictLabel.toString());
+            if (predictLabel.getPercentProp() < lowProp) {
+                continue;
+            }
+            if (predictLabel.getLabel().equals(labeledPoint.getLabel())) {
                 getLabelValidate(retList, labeledPoint.getLabel()).increaseCorrectCount(1);
             } else {
                 getLabelValidate(retList, labeledPoint.getLabel()).increaseWrongCount(1);

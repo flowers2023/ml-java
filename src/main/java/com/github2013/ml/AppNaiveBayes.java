@@ -15,6 +15,7 @@ public class AppNaiveBayes {
         String sadPath = "/home/shuangfu/code/ml-java/data/sad.txt";
         String sadTestPath = "/home/shuangfu/code/ml-java/data/sad-test.txt";
         String type = "multinomial";
+        double lowProp = 0;
 
         if (args.length >= 4) {
             happyPath = args[0];
@@ -22,6 +23,7 @@ public class AppNaiveBayes {
             sadPath = args[2];
             sadTestPath = args[3];
             type = args[4];
+            lowProp = Double.valueOf(args[5]);
         }
 
         System.out.printf("path list:" +
@@ -75,7 +77,8 @@ public class AppNaiveBayes {
         startTime = System.currentTimeMillis();
         List<LabeledPoint> testLabeledPoints = happyTestLabeledPoints;
         testLabeledPoints.addAll(sadTestLabeledPoints);
-        List<LabelValidate> testValidate = model.crossTest(testLabeledPoints);
+//        List<LabelValidate> testValidate = model.crossTest(testLabeledPoints);
+        List<LabelValidate> testValidate = model.crossTest(testLabeledPoints, lowProp);
         System.out.println("cross validate end,total time:[" + (System.currentTimeMillis() - startTime) / 1000 + "] seconds.");
         System.out.println("-------------------cross validate result-------------------");
         long correct = 0;
@@ -87,6 +90,11 @@ public class AppNaiveBayes {
         }
 
         double accuracy = (double) correct / (correct + wrong);
+        long testCount = correct + wrong;
+        System.out.println("-----------low than prop：[" + lowProp + "],\n总条数：" + testLabeledPoints.size() +
+                "\n测试条数：:" + testCount +
+                "\n测试占比:" + ((int) (((double) testCount / testLabeledPoints.size()) * 100 * 100) / 100) + "%"
+        );
         System.out.println("-----------准确率：" + (((int) (accuracy * 100 * 100)) / 100.0) + "%");
 
         System.out.println("Total time:[" + (System.currentTimeMillis() - toatalStartTime) / 1000 + "] seconds.");

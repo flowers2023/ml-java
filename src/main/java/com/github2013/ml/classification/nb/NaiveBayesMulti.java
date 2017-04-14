@@ -10,7 +10,7 @@ import java.util.*;
  * https://nlp.stanford.edu/IR-book/html/htmledition/naive-bayes-text-classification-1.html
  */
 
-public class NaiveBayesMulti implements NaiveBayes{
+public class NaiveBayesMulti implements NaiveBayes {
     private Set<String> vocabulary;
     private long docCount;
     private List<MultinomialModel> models;
@@ -160,14 +160,16 @@ public class NaiveBayesMulti implements NaiveBayes{
         List<LabelProbability> retList = new ArrayList<LabelProbability>();
         for (String[] words : sentenceArray) {
             LabelProbability expectLP = new LabelProbability("", -Double.MAX_VALUE);
+            double sumAllProp = 0d;
             for (MultinomialModel model : models) {
                 LabelProbability tmpPrep = model.predictProbability(words);
-                //System.out.println("----------------tmpPrep:" + tmpPrep.toString());
-                //System.out.println("----------------expertPrep:" + expectLP.toString());
+                sumAllProp += Math.exp(tmpPrep.getProbability());
                 if (tmpPrep.getProbability() > expectLP.getProbability()) {
                     expectLP = tmpPrep;
                 }
             }
+            expectLP.setPercentProp((double) Math.exp(expectLP.getProbability()) / sumAllProp);
+//            System.out.println("percent:" + expectLP.getPercentProp());
             retList.add(expectLP);
         }
         return retList;
@@ -185,6 +187,31 @@ public class NaiveBayesMulti implements NaiveBayes{
         for (LabeledPoint labeledPoint : testLabeledPoints) {
             String predictLabel = predict(labeledPoint.getVordsVecotr());
             if (predictLabel.equals(labeledPoint.getLabel())) {
+                getLabelValidate(retList, labeledPoint.getLabel()).increaseCorrectCount(1);
+            } else {
+                getLabelValidate(retList, labeledPoint.getLabel()).increaseWrongCount(1);
+            }
+        }
+        System.out.println("--------------crossTest end--------------");
+
+        return retList;
+    }
+
+    /**
+     * 交叉验证
+     *
+     * @param testLabeledPoints
+     * @return
+     */
+    public List<LabelValidate> crossTest(List<LabeledPoint> testLabeledPoints, double lowProp) {
+        System.out.println("--------------crossTest--------------");
+        List<LabelValidate> retList = new ArrayList<LabelValidate>();
+        for (LabeledPoint labeledPoint : testLabeledPoints) {
+            LabelProbability predictLabel = predictProbability(labeledPoint.getVordsVecotr());
+            if (predictLabel.getPercentProp() < lowProp) {
+                continue;
+            }
+            if (predictLabel.getLabel().equals(labeledPoint.getLabel())) {
                 getLabelValidate(retList, labeledPoint.getLabel()).increaseCorrectCount(1);
             } else {
                 getLabelValidate(retList, labeledPoint.getLabel()).increaseWrongCount(1);
