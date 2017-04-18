@@ -1,4 +1,6 @@
-KMeans聚类和naive Bayes朴素贝叶斯分类<br>
+KMeans聚类
+====
+naive Bayes朴素贝叶斯分类<br>
 ====
 朴素贝叶斯模型，分为两类：多项式模型和伯努利模型<br>
 * 多项式模型<br>
@@ -20,6 +22,9 @@ KMeans聚类和naive Bayes朴素贝叶斯分类<br>
 努伯利模型再计算后验概率和条件概率时，和多项式不同。算法如下：<br>
 ![努伯利模型公式](https://nlp.stanford.edu/IR-book/html/htmledition/img926.png)<br>
 
+
+FPG-Growth
+====
 
 
 
