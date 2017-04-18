@@ -38,7 +38,7 @@ public class FPGrowthTest extends TestCase {
          * 爆米花:2
          */
         ArrayList<String> ret = (ArrayList<String>) model.genFreqItems(data, 3);
-        String[] expert = {"面包", "啤酒", "牛奶", "薯片", "鸡蛋"};
+        String[] expert = {"面包", "鸡蛋", "啤酒", "薯片", "牛奶"};
 
         ret.forEach(System.out::println);
         Assert.assertArrayEquals(expert, ret.toArray());
